@@ -5,7 +5,5 @@
 
 	<type>binding</type>
 	<name>Sonoff Binding</name>
-	<description>This is the binding for sonoff</description>
-	<connection>hybrid</connection>
-
+	<description>Binding for Sonoff/Ewelink.</description>
 </addon:addon>

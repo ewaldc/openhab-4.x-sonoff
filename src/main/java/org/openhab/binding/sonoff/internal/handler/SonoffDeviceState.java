@@ -120,7 +120,8 @@ public class SonoffDeviceState {
                             parameters.setSwitch3(switchState);
                             break;
                         default:
-                            logger.warn("Sonoff addon support only devices with at most 4 switches, ignoring switch: " + i);
+                            logger.warn(
+                                    "Sonoff addon support only devices with at most 4 switches, ignoring switch: " + i);
                     }
                 }
             }

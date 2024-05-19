@@ -58,17 +58,24 @@ public class SonoffLanConnection {
     }
 
     public void start() {
+        logger.debug("SonoffLanConnection - Start");
         try {
             for (InetAddress address : getAddresses()) {
-                instances.putIfAbsent(address, JmDNS.create(address, "JmDNS-" + address.toString()));
-                logger.debug("mDNS service has been started on IP {}", address.getHostAddress());
-                JmDNS jmDns = instances.get(address);
-                if (jmDns != null) {
-                    jmDns.addServiceListener(SERVICE, this.listener);
+                logger.debug("SonoffLanConnection - Start address {}", address);
+                try {
+                    instances.putIfAbsent(address, JmDNS.create(address, "JmDNS-" + address.toString()));
+                    logger.debug("mDNS service has been started on IP {}", address.getHostAddress());
+                    JmDNS jmDns = instances.get(address);
+                    if (jmDns != null) {
+                        jmDns.addServiceListener(SERVICE, this.listener);
+                    }
+                } catch (Exception exc) {
+                    logger.error("Websocket Login Exception:{}, {}", exc.getMessage(), exc.getStackTrace());
                 }
             }
             listener.lanConnected(true);
         } catch (IOException e) {
+            logger.debug("SonoffLanConnection - Start failed");
             listener.lanConnected(false);
         }
     }

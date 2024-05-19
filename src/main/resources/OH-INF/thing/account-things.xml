@@ -10,13 +10,13 @@
 		<config-description>
 			<parameter name="appId" type="text" required="true">
 				<label>App Id</label>
-				<description>App Id</description>
-				<default>R8Oq3y0eSZSYdKccHlrQzT1ACCOUT9Gv</default>
+				<description>Application Id</description>
+				<default>4s1FXKC9FaGfoqXhmXSJneb3qcm1gOak</default>
 			</parameter>
 			<parameter name="appSecret" type="text" required="true">
 				<label>App Secret</label>
-				<description>App Secret</description>
-				<default>1ve5Qk9GXfUhKAn1svnKwpAlxXkMarru</default>
+				<description>Application Secret</description>
+				<default>oKvCM06gvwkRbfetd6qWRrbC3rFrbIpV</default>
 			</parameter>
 			<parameter name="email" type="text" required="true">
 				<label>Email</label>

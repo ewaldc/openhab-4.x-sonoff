@@ -46,6 +46,22 @@ public class Color extends AbstractCommand<Color> implements Serializable {
         this.color = color;
     }
 
+    public void setColor(Integer r, Integer g, Integer b) {
+        this.color.r = r;
+        this.color.g = g;
+        this.color.b = b;
+    }
+
+    public Color(Integer r, Integer g, Integer b) {
+        this.color.r = r;
+        this.color.g = g;
+        this.color.b = b;
+    }
+
+    public Color() {
+        this(0, 0, 0);
+    }
+
     private static final long serialVersionUID = 5376512912986765998L;
 
     public class ColorObject implements Serializable {

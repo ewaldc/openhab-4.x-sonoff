@@ -24,6 +24,7 @@ import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.types.*;
+import org.openhab.core.util.ColorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +48,10 @@ public class SonoffRGBCCTHandler extends SonoffBaseDeviceHandler {
     private Boolean colorTemperatureCheck = false;
 
     private Boolean colorCheck = false;
-    private PercentType redCache = new PercentType(0);
-    private PercentType greenCache = new PercentType(0);
-    private PercentType blueCache = new PercentType(0);
+    private HSBType colorCache = new HSBType();
+    // private PercentType redCache = new PercentType(0);
+    // private PercentType greenCache = new PercentType(0);
+    // private PercentType blueCache = new PercentType(0);
 
     public SonoffRGBCCTHandler(Thing thing) {
         super(thing);
@@ -97,17 +99,16 @@ public class SonoffRGBCCTHandler extends SonoffBaseDeviceHandler {
     }
 
     private void changeColor(Command command) {
-        HSBType hsb = (HSBType) command;
-        PercentType red = hsb.getRed();
-        PercentType green = hsb.getGreen();
-        PercentType blue = hsb.getBlue();
-        int redr = (int) (red.doubleValue() * 255 / 100);
-        int greenr = (int) (green.doubleValue() * 255 / 100);
-        int bluer = (int) (blue.doubleValue() * 255 / 100);
-        Color color = new Color();
-        color.getColor().setColorB(bluer);
-        color.getColor().setColorG(greenr);
-        color.getColor().setColorR(redr);
+        int[] rgb = ColorUtil.hsbToRgb((HSBType) command);
+        // HSBType hsb = (HSBType) command;
+        // PercentType red = rgb[0];
+        // PercentType green = hsb.get(1);
+        // PercentType blue = hsb.get(2));
+        // int redr = (int) (rgb.doubleValue() * 255 / 100);
+        // int greenr = (int) (green.doubleValue() * 255 / 100);
+        // int bluer = (int) (blue.doubleValue() * 255 / 100);
+        Color color = new Color(rgb[0], rgb[1], rgb[2]);
+        // color.setColor(rgb[0], rgb[1], rgb[2]);
         queueMessage(new SonoffCommandMessage("color", this.deviceid, false, color));
     }
 
@@ -174,12 +175,13 @@ public class SonoffRGBCCTHandler extends SonoffBaseDeviceHandler {
                         HSBType color = (HSBType) command;
 
                         if (!this.switchCache) {
-                            PercentType red = color.getRed();
-                            PercentType green = color.getGreen();
-                            PercentType blue = color.getBlue();
-                            this.redCache = red;
-                            this.greenCache = green;
-                            this.blueCache = blue;
+                            // PercentType red = color.getRed();
+                            // PercentType green = color.getGreen();
+                            // PercentType blue = color.getBlue();
+                            this.colorCache = color;
+                            // this.redCache = rgb[0];
+                            // this.greenCache = rgb[1];
+                            // this.blueCache = rgb[2];
                             this.colorCheck = true;
                             changeSwitch("on"); // We have to send this as there is a bug in the api where switch doesnt
                                                 // update to on when changing the color
@@ -236,17 +238,20 @@ public class SonoffRGBCCTHandler extends SonoffBaseDeviceHandler {
         }
 
         HSBType color = newDevice.getParameters().getColor();
+
         if (this.colorCheck) {
-            if (this.redCache.equals(color.getRed()) && this.greenCache.equals(color.getGreen())
-                    && this.blueCache.equals(color.getBlue())) {
+            if (this.colorCache == color) {
+                // if (this.redCache.equals(color.getRed()) && this.greenCache.equals(color.getGreen())
+                // && this.blueCache.equals(color.getBlue())) {
                 updateState("color", color);
                 colorCheck = false;
             }
         } else {
             updateState("color", color);
-            this.redCache = color.getRed();
-            this.greenCache = color.getGreen();
-            this.blueCache = color.getBlue();
+            this.colorCache = color;
+            // this.redCache = color.getRed();
+            // this.greenCache = color.getGreen();
+            // this.blueCache = color.getBlue();
         }
 
         PercentType colorTemperature = newDevice.getParameters().getColorTemperature();

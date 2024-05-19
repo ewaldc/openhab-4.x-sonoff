@@ -49,6 +49,7 @@ public class SonoffWebSocketConnection {
     private String apiKey = "";
     private String at = "";
     private String appId = "";
+    private Integer retryCount = 0;
 
     private @Nullable Session session;
 
@@ -85,9 +86,16 @@ public class SonoffWebSocketConnection {
                 ClientUpgradeRequest request = new ClientUpgradeRequest();
                 URI uri = new URI(url);
                 websocketClient.connect(this, uri, request);
+                retryCount = 0;
             } catch (Exception e) {
                 logger.error("Websocket Login Exception:{}, {}", e.getMessage(), e.getStackTrace());
                 listener.websocketConnected(false);
+                try {
+                    Thread.sleep(++retryCount * 60000);
+                } catch (InterruptedException ie) {
+                    // TODO Auto-generated catch block
+                    ie.printStackTrace();
+                }
             }
         } else {
             logger.error("Unable to start websocket as the server address is not set");
@@ -148,22 +156,26 @@ public class SonoffWebSocketConnection {
 
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
+
         if (statusCode == 1000) {
             logger.debug("Websocket Sucessfully closed");
+            listener.websocketConnected(false);
+            this.session = null;
         } else {
             logger.error("Websocket Closed, Status Code: {}, Reason:{}", statusCode, reason);
+            if (retryCount < 10)
+                start(); // Attempt reconnection
         }
-        listener.websocketConnected(false);
-        this.session = null;
     }
 
     @OnWebSocketError
     public void onError(Throwable cause) {
-        logger.error("Websocket Error: " + cause.getMessage(), cause);
         String reason = cause.getMessage();
         if (reason != null) {
+            logger.error("Websocket Error: " + reason, cause);
             onClose(0, reason);
         } else {
+            logger.error("Websocket Error", cause);
             onClose(0, "");
         }
     }

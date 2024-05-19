@@ -52,6 +52,8 @@ public class SonoffConnectionManager
     }
 
     public void start(String appId, String appSecret, String email, String password, String mode) {
+        logger.debug("ConnectionManager Start for {} mode ", mode);
+
         this.mode = mode;
         api.setAppId(appId);
         api.setAppSecret(appSecret);

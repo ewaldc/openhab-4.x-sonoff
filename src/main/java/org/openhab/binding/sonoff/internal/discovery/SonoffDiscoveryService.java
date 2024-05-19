@@ -30,7 +30,6 @@ import org.openhab.binding.sonoff.internal.handler.SonoffRfBridgeHandler;
 import org.openhab.binding.sonoff.internal.handler.SonoffZigbeeBridgeHandler;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
-import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
@@ -51,8 +50,9 @@ import com.google.gson.JsonObject;
  * @author David Murton - Initial contribution
  */
 
+@Component(service = SonoffDiscoveryService.class, immediate = true, configurationPid = "discovery.sonoff")
+
 @NonNullByDefault
-@Component(service = DiscoveryService.class, configurationPid = "discovery.sonoff")
 public class SonoffDiscoveryService extends AbstractDiscoveryService implements ThingHandlerService {
     // , DiscoveryService {
     private final Logger logger = LoggerFactory.getLogger(SonoffDiscoveryService.class);
